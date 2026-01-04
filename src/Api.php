@@ -19,10 +19,6 @@ class Api extends AbstractAPI
 
     /**
      * Api constructor.
-     * @param $appkey
-     * @param $appsecret
-     * @param $sid
-     * @param $baseUrl
      */
     public function __construct($appkey, $appsecret, $sid, $baseUrl)
     {
@@ -41,7 +37,7 @@ class Api extends AbstractAPI
 
         $baseUrl = Helper::finish($this->getBaseUrl(), '/');
 
-        $link = $baseUrl . $url;
+        $link = $baseUrl.$url;
 
         /** @var ResponseInterface $response */
         $response = call_user_func_array([$http, $method], [$link, $params]);
@@ -51,11 +47,12 @@ class Api extends AbstractAPI
 
     /**
      * 生成签名.
+     *
      * @return string
      */
     public function sign(array $request_params)
     {
-        return md5($this->pack($request_params) . $this->getAppsecret());
+        return md5($this->pack($request_params).$this->getAppsecret());
     }
 
     /**
@@ -67,7 +64,7 @@ class Api extends AbstractAPI
     }
 
     /**
-     * @param mixed $appsecret
+     * @param  mixed  $appsecret
      */
     public function setAppsecret($appsecret)
     {
@@ -83,7 +80,7 @@ class Api extends AbstractAPI
     }
 
     /**
-     * @param mixed $appkey
+     * @param  mixed  $appkey
      */
     public function setAppkey($appkey)
     {
@@ -99,7 +96,7 @@ class Api extends AbstractAPI
     }
 
     /**
-     * @param mixed $sid
+     * @param  mixed  $sid
      */
     public function setSid($sid)
     {
@@ -107,19 +104,20 @@ class Api extends AbstractAPI
     }
 
     /**
-     * @param bool $autoAppendCommonPath
+     * @param  bool  $autoAppendCommonPath
      * @return mixed
      */
     public function getBaseUrl($autoAppendCommonPath = true)
     {
         if ($autoAppendCommonPath) {
-            return Helper::finish($this->_baseUrl, '/') . 'openapi2';
+            return Helper::finish($this->_baseUrl, '/').'openapi2';
         }
+
         return $this->_baseUrl;
     }
 
     /**
-     * @param mixed $baseUrl
+     * @param  mixed  $baseUrl
      */
     public function setBaseUrl($baseUrl)
     {
@@ -135,7 +133,7 @@ class Api extends AbstractAPI
     }
 
     /**
-     * @param string $shopNo
+     * @param  string  $shopNo
      */
     public function setShopNo($shopNo)
     {
@@ -144,6 +142,7 @@ class Api extends AbstractAPI
 
     /**
      * 系统级别参数，不包含sign字段.
+     *
      * @return array
      */
     protected function systemParams()
@@ -157,6 +156,7 @@ class Api extends AbstractAPI
 
     /**
      * 参数打包.
+     *
      * @return mixed
      */
     private function pack(array $request_params)
@@ -170,15 +170,16 @@ class Api extends AbstractAPI
             if (count($arr)) {
                 $arr[] = ';';
             }
-            $arr[] = sprintf('%02d', iconv_strlen($key, 'UTF-8')); //键key的长度用2位数字表示
+            $arr[] = sprintf('%02d', iconv_strlen($key, 'UTF-8')); // 键key的长度用2位数字表示
             $arr[] = '-';
             $arr[] = $key;
             $arr[] = ':';
 
-            $arr[] = sprintf('%04d', iconv_strlen($val, 'UTF-8')); //值value的长度用4位数字表示
+            $arr[] = sprintf('%04d', iconv_strlen($val, 'UTF-8')); // 值value的长度用4位数字表示
             $arr[] = '-';
             $arr[] = $val;
         }
+
         return implode('', $arr);
     }
 }

@@ -9,7 +9,6 @@ class Purchase extends Api
     /**
      * 创建采购单.
      *
-     * @param $purchase_info
      * @return mixed
      */
     public function purchaseOrderPush($purchase_info)
@@ -25,7 +24,6 @@ class Purchase extends Api
     /**
      * 推送采购单对应的入库单给ERP 创建采购入库单.
      *
-     * @param $purchase_info
      * @return mixed
      */
     public function stockinPurchasePush($purchase_info)
@@ -41,9 +39,7 @@ class Purchase extends Api
     /**
      * 获取ERP的采购单信息 查询采购单管理.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function purchaseOrderQuery($start_time, $end_time, $otherParams = [])
@@ -64,9 +60,7 @@ class Purchase extends Api
     /**
      * 获取ERP采购单对应的入库单信息 查询采购入库单.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function stockinOrderQueryPurchase($start_time, $end_time, $otherParams = [])
@@ -87,7 +81,6 @@ class Purchase extends Api
     /**
      * 推送采购退货单据给ERP 创建采购退货单.
      *
-     * @param $return_info
      * @return mixed
      */
     public function purchaseReturnPush($return_info)
@@ -103,7 +96,6 @@ class Purchase extends Api
     /**
      * 推送采购退货单对应的出库单给ERP 创建采购退货出库单.
      *
-     * @param $purchase_return_info
      * @return mixed
      */
     public function purchaseReturnOrderPush($purchase_return_info)
@@ -119,9 +111,7 @@ class Purchase extends Api
     /**
      * 获取ERP的采购退货单信息 查询采购退货单.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function purchaseReturnQuery($start_time, $end_time, $otherParams = [])
@@ -142,9 +132,7 @@ class Purchase extends Api
     /**
      * 查询ERP中采购退货出库单信息 查询采购退货出库单.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function stockoutOrderQueryReturn($start_time, $end_time, $otherParams = [])

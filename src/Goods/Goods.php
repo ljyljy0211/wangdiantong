@@ -9,7 +9,6 @@ class Goods extends Api
     /**
      * 创建货品档案.
      *
-     * @param $goods_list
      * @return mixed
      */
     public function goodsPush($goods_list)
@@ -26,9 +25,7 @@ class Goods extends Api
     /**
      * 查询货品档案.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function goodsQuery($start_time, $end_time, $otherParams = [])
@@ -49,9 +46,6 @@ class Goods extends Api
     /**
      * 创建平台货品
      *
-     * @param $platform_id
-     * @param $shop_no
-     * @param $goods_list
      * @return mixed
      */
     public function apiGoodsspecPush($platform_id, $shop_no, $goods_list)
@@ -74,10 +68,7 @@ class Goods extends Api
     /**
      * 查询组合装.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param $suite_no
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function suitesQuery($start_time, $end_time, $suite_no, $otherParams = [])

@@ -10,9 +10,7 @@ class Trade extends Api
      * 1. 推送销售订单给ERP
      * 2. 更新已推送成功的销售订单.
      *
-     * @param $trade_list
-     * @param $shop_no
-     * @param int $switch
+     * @param  int  $switch
      * @return mixed
      */
     public function tradePush($trade_list, $shop_no, $switch = 0)
@@ -31,9 +29,7 @@ class Trade extends Api
     /**
      * 获取ERP的销售订单信息.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function tradeQuery($start_time, $end_time, $otherParams = [])
@@ -54,9 +50,7 @@ class Trade extends Api
     /**
      * 获取ERP销售订单的出库单信息 查询销售出库单.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function stockoutOrderQueryTrade($start_time, $end_time, $otherParams = [])
@@ -79,9 +73,8 @@ class Trade extends Api
      * 注：”查询物流同步”与“物流同步回写”两个接口配合使用，完成“销售订单发货同步”
      * 查询物流同步.
      *
-     * @param $limit
-     * @param string $shop_no
-     * @param int $is_part_sync_able
+     * @param  string  $shop_no
+     * @param  int  $is_part_sync_able
      * @return mixed
      */
     public function logisticsSyncQuery($limit, $shop_no = '', $is_part_sync_able = -1)
@@ -109,7 +102,6 @@ class Trade extends Api
      * 同步发货状态、物流单号给平台是否成功的状态回传给ERP
      * 物流同步回写.
      *
-     * @param $logistics_list
      * @return mixed
      */
     public function logisticsSyncAck($logistics_list)
@@ -128,8 +120,6 @@ class Trade extends Api
      * 注：”查询同步库存”与“库存同步回写”两个接口配合使用，完成“库存同步”
      * 查询同步库存.
      *
-     * @param $shop_no
-     * @param $limit
      * @return mixed
      */
     public function apiGoodsStockChangeQuery($shop_no, $limit)
@@ -147,7 +137,6 @@ class Trade extends Api
     /**
      * 库存量同步至平台是否成功的状态回传给ERP 库存同步回写.
      *
-     * @param $stock_sync_list
      * @return mixed
      */
     public function apiGoodsStockChangeAck($stock_sync_list)

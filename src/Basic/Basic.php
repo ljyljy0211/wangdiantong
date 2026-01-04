@@ -9,7 +9,7 @@ class Basic extends Api
     /**
      * 查询店铺.
      *
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function shop($otherParams = [])
@@ -28,7 +28,7 @@ class Basic extends Api
     /**
      * 查询仓库详细信息.
      *
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function warehouseQuery($otherParams = [])
@@ -47,7 +47,7 @@ class Basic extends Api
     /**
      * 获取ERP的物流公司档案资料 查询物流
      *
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function logistics($otherParams = [])
@@ -66,8 +66,7 @@ class Basic extends Api
     /**
      * 查询供应商管理.
      *
-     * @param $column
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function purchaseProviderQuery($column, $otherParams = [])
@@ -87,12 +86,7 @@ class Basic extends Api
     /**
      * 推送供应商档案资料给ERP	 创建供应商.
      *
-     * @param $provider_no
-     * @param $provider_name
-     * @param $min_purchase_num
-     * @param $purchase_cycle_days
-     * @param $arrive_cycle_days
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function purchaseProviderCreate($provider_no, $provider_name, $min_purchase_num, $purchase_cycle_days, $arrive_cycle_days, $otherParams = [])

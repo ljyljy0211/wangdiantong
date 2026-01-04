@@ -9,9 +9,7 @@ class Stock extends Api
     /**
      * 查询库存API.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function stockQuery($start_time, $end_time, $otherParams = [])
@@ -33,10 +31,7 @@ class Stock extends Api
      * 创建盘点开单
      * ERP库存需要调整时，推送盘点库存单据给ERP 注：ERP盘点成功后，盘点单内的库存值直接覆盖前库存.
      *
-     * @param $warehouse_no
-     * @param $is_adjust_stock
-     * @param $goods_list
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function stockSyncByPd($warehouse_no, $is_adjust_stock, $goods_list, $otherParams = [])
@@ -59,7 +54,7 @@ class Stock extends Api
      * 查询盘点单
      * 获取调整ERP库存的盘点单据信息 注：ERP盘点成功后，盘点单内的库存值直接覆盖前库存.
      *
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function stockPdOrderQuery($otherParams = [])
@@ -78,7 +73,6 @@ class Stock extends Api
     /**
      * 创建其他入库单.
      *
-     * @param $stockin_info
      * @return mixed
      */
     public function stockinOrderPush($stockin_info)
@@ -94,9 +88,7 @@ class Stock extends Api
     /**
      * 查询入库单管理.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function stockinOrderQuery($start_time, $end_time, $otherParams = [])
@@ -117,7 +109,6 @@ class Stock extends Api
     /**
      * 创建其他出库单.
      *
-     * @param $stockout_info
      * @return mixed
      */
     public function stockoutOrderPush($stockout_info)
@@ -133,9 +124,7 @@ class Stock extends Api
     /**
      *  查询出库单管理.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function stockoutOrderQuery($start_time, $end_time, $otherParams = [])
@@ -157,7 +146,6 @@ class Stock extends Api
      * 创建调拨单
      * ERP内仓与仓之间的库存需要调度时，推送调拨单给ERP.
      *
-     * @param $transfer_info
      * @return mixed
      */
     public function stockTransferPush($transfer_info)
@@ -174,7 +162,6 @@ class Stock extends Api
      * 创建调拨出库单
      * ERP调拨业务走到出库步骤时，推送调拨出库单给ERP.
      *
-     * @param $stockout_info
      * @return mixed
      */
     public function stockoutTransferPush($stockout_info)
@@ -191,7 +178,6 @@ class Stock extends Api
      * 创建调拨入库单
      * ERP调拨业务中发货仓库出库完成，收货仓库需要入库单前推送调拨入库单给ERP.
      *
-     * @param $stockin_info
      * @return mixed
      */
     public function stockinTransferPush($stockin_info)
@@ -208,9 +194,7 @@ class Stock extends Api
      * 查询调拨单信息
      * 获取ERP的调拨单据信息.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function stockTransferQuery($start_time, $end_time, $otherParams = [])

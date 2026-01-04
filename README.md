@@ -200,6 +200,79 @@ $trade->apiGoodsStockChangeAck($stock_sync_list);
 
 ```
 
+> 旺店通旗舰版 OpenApi 接口（使用新的签名算法）
+
+**注意**：旺店通分为企业版和旗舰版两套不同的接口系统：
+- **企业版**：使用 `$wdt->trade`, `$wdt->basic` 等，接口路径为 `openapi2`，使用旧的签名算法
+- **旗舰版**：使用 `$wdt->qijianApi`，接口路径为 `openapi`，使用新的签名算法
+
+```php
+<?php
+
+use YiHaiTao\WangDianTong\WangDianTong;
+
+$config = [
+    'appkey' => 'czhc',
+    'appsecret' => '693f9fed686bfe13441385da98b436b6:dd488d0802b1e431e4c72cd355847853', // 格式：secret:salt
+    'sid' => 'wdterp30',
+    'baseUrl' => 'http://47.92.239.46/openapi', // 旗舰版使用 openapi 路径
+];
+
+// 实例化旺店通sdk
+$wdt = new WangDianTong($config);
+
+// 获取旗舰版 OpenApi 实例
+$qijianApi = $wdt->qijianApi;
+
+// 非分页调用接口（数组参数方式）
+$result = $qijianApi->call("wms.stockout.Sales.weighingExt", [
+    "xc109393939393939",
+    "",
+    1.2,
+    0,
+    false
+]);
+
+// 分页调用接口（分页参数会自动添加到 URL，不会放入 body）
+// 分页参数说明：
+// - page_size: 分页大小（必填）
+// - page_no: 分页编号，从 0 开始（必填）
+// - calc_total: 是否计算总数，1=计算，0=不计算（可选，默认0）
+$result = $qijianApi->call("sales.TradeQuery.queryWithDetail", [
+    // body 参数（业务参数）
+    'start_time' => '2020-08-28 9:01:00',
+    'end_time' => '2020-08-28 10:00:00',
+    // 分页参数（会自动识别并添加到 URL，参与签名计算）
+    'page_size' => 20,
+    'page_no' => 1,
+    'calc_total' => 1,
+]);
+```
+
+## 旗舰版签名算法说明
+
+旺店通旗舰版 OpenApi 使用新的签名算法（与企业版不同）：
+
+1. **参数说明**：
+   - `sid`: 卖家账号
+   - `key`: appkey
+   - `appsecret`: 格式为 `secret:salt`，例如：`testsecret:testsalt`
+   - `method`: 接口名称
+   - `v`: 版本号，固定为 `1.0`
+   - `timestamp`: 秒级时间戳，当前时间戳减去 2012-01-01 00:00:00(1325347200)
+   - `body`: 业务参数的 JSON 格式（压缩，不包含换行等字符）
+
+2. **签名步骤**：
+   - 按照键名做正序排序
+   - 拼接字符串：`secret + 排序后的键值对拼接 + secret`
+   - 对字符串做 MD5
+
+3. **请求方式**：
+   - 方法：POST
+   - Content-Type: application/json
+   - URL 参数：使用 `http_build_query()` 生成（不包括 body）
+   - body：作为 POST 请求体发送（JSON 格式）
+
 ## License
 
 MIT

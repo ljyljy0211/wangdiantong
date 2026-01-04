@@ -9,7 +9,6 @@ class Refund extends Api
     /**
      * 创建原始退款单.
      *
-     * @param $api_refund_list
      * @return mixed
      */
     public function salesRefundPush($api_refund_list)
@@ -26,7 +25,6 @@ class Refund extends Api
      * 创建销售退货入库单
      * 推送ERP销售退货（换货）订单对应的入库单据给ERP 推送前提ERP的退换单状态为“待收货”.
      *
-     * @param $stockin_refund_info
      * @return mixed
      */
     public function stockinRefundPush($stockin_refund_info)
@@ -42,9 +40,7 @@ class Refund extends Api
     /**
      * 获取ERP销售退货（换货）订单信息 查询退换管理.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function refundQuery($start_time, $end_time, $otherParams = [])
@@ -65,9 +61,7 @@ class Refund extends Api
     /**
      * 获取ERP销售退货（换货）订单对应的入库单信息 查询退货入库单管理.
      *
-     * @param $start_time
-     * @param $end_time
-     * @param array $otherParams
+     * @param  array  $otherParams
      * @return mixed
      */
     public function stockinOrderQueryRefund($start_time, $end_time, $otherParams = [])
