@@ -61,49 +61,87 @@ class OpenApi extends AbstractAPI
     }
 
     /**
-     * 调用接口
+     * 调用接口（与官方 SDK 一致，使用可变参数）
      *
      * @param  string  $method  接口名称，例如：wms.stockout.Sales.weighingExt
-     * @param  array  $params  参数数组，包含 body 参数和可选的分页参数
-     *                         分页参数：page_size（分页大小）、page_no（分页编号）、calc_total（是否计算总数，1或0）
-     *                         分页参数会自动添加到 URL 中，不会放入 body
-     *                         示例：
-     *                         - 非分页：call("method", ["arg1", "arg2", 1.2])
-     *                         - 分页：call("method", ["arg1", "arg2", "page_size" => 20, "page_no" => 1, "calc_total" => 1])
+     * @param  mixed  ...$args  业务参数，可变参数，例如：call("method", "arg1", "arg2", $array)
+     *                          与官方 SDK 一致：call("sales.RawTrade.pushSelf", $shop_no, $rawTradeList, $rawTradeOrderList)
      * @return array
      */
-    public function call($method, $params = [])
+    public function call($method, ...$args)
     {
         $http = $this->getHttp();
 
-        // 分离分页参数和 body 参数
+        // 官方 SDK 中：$args = func_get_args()，移除 method 后，json_encode($args)
+        $bodyParams = $args;
         $pagerParams = [];
-        $bodyParams = [];
 
-        // 分页参数的键名
-        $pagerKeys = ['page_size', 'page_no', 'calc_total'];
+        // 构建请求参数
+        $requestParams = $this->buildParams($method, $bodyParams, $pagerParams);
 
-        // 检查是否有分页参数
-        $hasPagerParams = false;
-        foreach ($pagerKeys as $pagerKey) {
-            if (isset($params[$pagerKey])) {
-                $hasPagerParams = true;
-                $pagerParams[$pagerKey] = $params[$pagerKey];
-            }
+        // 计算签名（注意：sign 方法会修改 $requestParams 数组）
+        $requestParams['sign'] = $this->sign($requestParams);
+
+        // 构建URL（包含查询参数，但不包含body）
+        $urlParams = $requestParams;
+        $bodyJson = $urlParams['body'];
+        unset($urlParams['body']); // body 不放在 URL 中
+        $url = $this->baseUrl.'?'.http_build_query($urlParams);
+
+        // json 选项会自动设置 Content-Type: application/json 并编码 JSON
+        $bodyData = json_decode($bodyJson, true);
+        $options = [
+            'json' => $bodyData,
+        ];
+
+        /** @var ResponseInterface $response */
+        $response = $http->request('POST', $url, $options);
+
+        $responseBody = strval($response->getBody());
+
+        // 如果响应不是 JSON，记录错误信息
+        $result = json_decode($responseBody, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            // 如果不是 JSON，返回原始响应
+            return [
+                'status' => -1,
+                'message' => '响应解析失败: '.json_last_error_msg(),
+                'raw_response' => $responseBody,
+            ];
         }
 
-        // 构建 body 参数（排除分页参数）
-        foreach ($params as $key => $value) {
-            if (! in_array($key, $pagerKeys)) {
-                if (is_int($key)) {
-                    // 数字索引的参数，按顺序添加到 body 参数
-                    $bodyParams[] = $value;
-                } else {
-                    // 字符串键的参数，添加到 body 参数
-                    $bodyParams[$key] = $value;
-                }
-            }
+        return $result;
+    }
+
+    /**
+     * 分页调用接口（与官方 SDK 一致）
+     *
+     * @param  string  $method  接口名称
+     * @param  array|object  $pager  分页参数，可以是数组 ['page_size' => 10, 'page_no' => 0, 'calc_total' => 1] 或对象
+     * @param  mixed  ...$args  业务参数，可变参数
+     * @return array
+     */
+    public function pageCall($method, $pager, ...$args)
+    {
+        $http = $this->getHttp();
+
+        // 处理分页参数
+        $pagerParams = [];
+        if (is_array($pager)) {
+            $pagerParams['page_size'] = $pager['page_size'] ?? 10;
+            $pagerParams['page_no'] = $pager['page_no'] ?? 0;
+            $pagerParams['calc_total'] = isset($pager['calc_total']) ? ($pager['calc_total'] ? 1 : 0) : 1;
+        } elseif (is_object($pager) && method_exists($pager, 'getPageSize')) {
+            // 支持官方 SDK 的 Pager 对象
+            $pagerParams['page_size'] = $pager->getPageSize();
+            $pagerParams['page_no'] = $pager->getPageNo();
+            $pagerParams['calc_total'] = $pager->getCalcTotal() ? 1 : 0;
+        } else {
+            throw new Exception('pager must be an array or an object with getPageSize/getPageNo/getCalcTotal methods');
         }
+
+        // 与官方 SDK 一致：直接使用 $args 作为 body 参数
+        $bodyParams = $args;
 
         // 构建请求参数
         $requestParams = $this->buildParams($method, $bodyParams, $pagerParams);
@@ -146,18 +184,14 @@ class OpenApi extends AbstractAPI
      * 构建请求参数
      *
      * @param  string  $method  接口名称
-     * @param  array  $bodyParams  body 参数数组
+     * @param  array  $bodyParams  body 参数数组（可变参数列表）
      * @param  array  $pagerParams  分页参数
      * @return array
      */
     protected function buildParams($method, $bodyParams = [], $pagerParams = [])
     {
-        if (empty($bodyParams)) {
-            $body = json_encode([]);
-        } else {
-            // 如果 bodyParams 是关联数组，直接包装；如果是数字索引数组，也包装
-            $body = json_encode([$bodyParams]);
-        }
+        // 官方 SDK 中：$body = json_encode($args);
+        $body = json_encode($bodyParams);
 
         $params = [
             'sid' => $this->sid,
@@ -171,16 +205,10 @@ class OpenApi extends AbstractAPI
 
         // 如果有分页参数，添加到 params 中（与官方 SDK 保持一致）
         if (! empty($pagerParams)) {
-            if (isset($pagerParams['page_size'])) {
-                $params['page_size'] = $pagerParams['page_size'];
-            }
-            if (isset($pagerParams['page_no'])) {
-                $params['page_no'] = $pagerParams['page_no'];
-            }
-            if (isset($pagerParams['calc_total'])) {
-                // 与官方 SDK 一致：布尔值转换为 1 或 0
-                $params['calc_total'] = $pagerParams['calc_total'] ? 1 : 0;
-            }
+            $params['page_size'] = $pagerParams['page_size'];
+            $params['page_no'] = $pagerParams['page_no'];
+            // 与官方 SDK 一致：布尔值转换为 1 或 0
+            $params['calc_total'] = $pagerParams['calc_total'] ? 1 : 0;
         }
 
         return $params;
